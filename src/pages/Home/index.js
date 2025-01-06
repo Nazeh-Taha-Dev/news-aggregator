@@ -1,36 +1,53 @@
 import React from "react";
-import { Container, Typography, TextField, Grid } from "@mui/material";
+import { Container, Grid2 } from "@mui/material";
 import ArticleCard from "../../components/ArticleCard";
 import useHomePageHook from "./useHomePageHook";
-import Navbar from "../../components/NavBar";
+import { LoadingSkeleton } from "../../components/LoadingSkeleton";
+import FilterCard from "../../components/FilterCard";
+import { FilterDataProvider } from "./FilterDataContext";
+import { useInfiniteScroll } from "../../utils/hooks";
+
 
 function Home() {
-const {searchTerm, handleChangeSearch, articles} = useHomePageHook();
-  return (
-    <>
-       <Navbar />
+  
+  const { loading, articles,hasMore, fetchNextPageArticles } = useHomePageHook();
 
+  const { lastItemRef } = useInfiniteScroll({
+    hasMore,
+    isLoading: loading,
+    loadNextPage: fetchNextPageArticles,
+  });
+
+  return (
     <Container>
-      <Typography variant="h3" component="h1" gutterBottom>
-        News Aggregator
-      </Typography>
-      <TextField
-        label="Search"
-        variant="outlined"
-        fullWidth
-        value={searchTerm}
-        onChange={handleChangeSearch}
-      />
-      <Grid container spacing={2} marginTop={2}>
-        {articles.map((article) => (
-          <Grid item xs={12} sm={6} md={4} key={article.id}>
+      <FilterCard />
+      <Grid2 container spacing={2} marginTop={2}>
+        {articles.map((article, index) => (
+          <Grid2
+            item
+            size={{ xs: 12, sm: 6, md: 4 }}
+            key={article.id}
+            ref={index === articles.length - 1 ? lastItemRef : null}
+          >
             <ArticleCard article={article} />
-          </Grid>
+          </Grid2>
         ))}
-      </Grid>
+        {loading && <LoadingSkeleton />}
+      </Grid2>
     </Container>
-    </>
   );
 }
 
-export default Home;
+/**
+ * The HomePage component is the main page of the application.
+ * It renders the Home component which displays the list of articles
+ * and the FilterCard component which allows the user to filter the articles.
+ * The FilterDataProvider component is used to provide the filter data to the Home component.
+ */
+export default function HomePage() {
+  return (
+    <FilterDataProvider>
+      <Home />
+    </FilterDataProvider>
+  );
+}

@@ -1,22 +1,28 @@
 import {
+  GUARDIAN_API_KEY,
   GUARDIAN_API_URL,
+  NEWS_API_KEY,
   NEWS_API_URL,
+  NYT_API_KEY,
   NYT_API_URL,
+  PAGE_SIZE,
 } from "./base-urls-consts";
 import {
   normalizeGuardianResponse,
   normalizeNewsAPIResponse,
   normalizeNYTResponse,
+  removeEmptyValues,
 } from "../utils/handlers";
 import { apiHandler } from "../utils/handlers/apiHandler";
-const NEWS_API_KEY="191e900eddd449f0b65fdb57db1e9f39"
-const GUARDIAN_API_KEY="b12b98aa-0844-4180-b3cb-2223c496ff07"
-const NYT_API_KEY="AvMzjWtOGoTtrZKRiTvfrbpYhCrnMnnt"
+
+
+
 // Fetch articles from NewsAPI
 export const fetchNewsAPIArticles = (params) => {
   const urlParams = {
     apiKey: NEWS_API_KEY,
-    ...params,
+    pageSize: PAGE_SIZE,
+    ...removeEmptyValues(params), // remove empty values from params,
   };
   return apiHandler({
     url: NEWS_API_URL,
@@ -29,7 +35,8 @@ export const fetchNewsAPIArticles = (params) => {
 export const fetchGuardianArticles = (params) => {
   const urlParams = {
     "api-key": GUARDIAN_API_KEY,
-    ...params,
+    pageSize: PAGE_SIZE,
+    ...removeEmptyValues(params),
   };
   return apiHandler({
     url: GUARDIAN_API_URL,
@@ -42,10 +49,12 @@ export const fetchGuardianArticles = (params) => {
 export const fetchNYTArticles = (params) => {
   const urlParams = {
     "api-key": NYT_API_KEY,
-    ...params,
+     pageSize: PAGE_SIZE,
+    ...removeEmptyValues(params),
   };
   return apiHandler({
     url: NYT_API_URL,
+     pageSize: PAGE_SIZE,
     urlParams,
     normalizeResponseFunction: normalizeNYTResponse,
   });

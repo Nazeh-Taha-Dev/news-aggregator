@@ -28,15 +28,17 @@ export async function apiHandler({
     if (!response.ok)
       return {
         status: "error",
-        message: "Failed to fetch NYT data",
-        payload: [],
+        message: "Failed to fetch data",
+        payload: normalizeResponseFunction
+        ? normalizeResponseFunction(null)
+        : null,
       };
       
     const data = await response.json();
 
     return {
       status: "success",
-      message: "succeed to fetch NYT data",
+      message: "succeed to fetch data",
       payload: normalizeResponseFunction
         ? normalizeResponseFunction(data)
         : data,
@@ -44,8 +46,10 @@ export async function apiHandler({
   } catch (error) {
     return {
       status: "error",
-      message: "Failed to fetch NYT data",
-      payload: [],
+      message: "Failed to fetch data",
+      payload: normalizeResponseFunction
+      ? normalizeResponseFunction(null)
+      : null,
     };
   }
 }
