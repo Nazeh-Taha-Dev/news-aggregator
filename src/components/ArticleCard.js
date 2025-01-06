@@ -8,6 +8,7 @@ import {
   CardActions,
   Divider,
   Box,
+  CardActionArea,
 } from "@mui/material";
 import noImage from "../assets/imgs/no-image.jpg";
 
@@ -26,35 +27,37 @@ import noImage from "../assets/imgs/no-image.jpg";
  */
 export default function ArticleCard({ article }) {
   return (
-    <Card sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      <CardMedia
-        component="img"
-        height="150"
-        image={article.image ? article.image : noImage}
-        alt={article.title}
-        sx={{ objectFit: "fill" }}
-        loading="lazy"
-      />
+    <Card sx={{ display: "flex",justifyContent: "space-between", flexDirection: "column", height: "100%" }}>
+      <CardActionArea href={article.url} target="_blank">
+        <CardMedia
+          component="img"
+          height="170"
+          image={article.image ? article.image : noImage}
+          alt={article.title}
+          sx={{ objectFit: "contain", background: "#000" }}
+          loading="lazy"
+        />
 
-      <CardContent sx={{ flexGrow: 1 }}>
-        <Box marginBlock={1}>
-          <Typography variant="body2" color="primary">
-            {article.source}
+        <CardContent sx={{ flexGrow: 1 }}>
+          <Box marginBlock={1}>
+            <Typography variant="body2" color="primary">
+              {article.source}
+            </Typography>
+            <Typography variant="caption" color="textSecondary">
+              {article.publishedAt}
+            </Typography>
+            <Divider />
+          </Box>
+
+          <Typography variant="h6">{article.title}</Typography>
+
+          <Typography variant="body2" color="textSecondary">
+            {article.description}
           </Typography>
-          <Typography variant="caption" color="textSecondary">
-            {article.publishedAt}
-          </Typography>
-          <Divider />
-        </Box>
-
-        <Typography variant="h6">{article.title}</Typography>
-
-        <Typography variant="body2" color="textSecondary">
-          {article.description}
-        </Typography>
-      </CardContent>
+        </CardContent>
+      </CardActionArea>
       <CardActions>
-        <Button href={article.url} target="_blank" fullWidth>
+        <Button href={article.url} target="_blank" size="small" color="primary">
           Read More
         </Button>
       </CardActions>

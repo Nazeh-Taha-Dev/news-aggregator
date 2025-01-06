@@ -1,20 +1,18 @@
 import { useCallback, useRef } from "react";
 
-/**
- * useInfiniteScroll
- *
- * This hook helps to implement infinite scroll feature in lists.
- *
- * It takes 3 props in an object:
- * - hasMore: boolean indicating whether there are more pages to load.
- * - isLoading: boolean indicating whether the next page is being loaded.
- * - loadNextPage: a function to be called when the next page should be loaded.
- *
- * The hook returns an object with a single property: lastItemRef.
- * This is a function that should be passed to the last item in the list.
- * It sets up an observer that will call loadNextPage when the last item
- * comes into view.
- */
+  /**
+   * Provides a function to trigger loading the next page of data when the
+   * last item in the list comes into view.
+   *
+   * @param {object} options
+   * @param {boolean} options.hasMore - Should the next page be loaded?
+   * @param {boolean} options.isLoading - Is a load in progress?
+   * @param {function} options.loadNextPage - Function to load the next page.
+   * @returns {object} An object with a single property, `lastItemRef`.
+   *   `lastItemRef` is a function that takes a node and observes it for
+   *   intersection with the viewport. When the node comes into view, and
+   *   `hasMore` is true, the `loadNextPage` function is called.
+   */
 export const useInfiniteScroll = ({
     hasMore,
     isLoading,

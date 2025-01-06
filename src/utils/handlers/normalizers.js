@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid"; // create random id's
 import { formatDate } from "./formatDate";
-import { PAGE_SIZE } from "../../services/base-urls-consts";
+import { PAGE_SIZE } from "../../constants/base-urls-consts";
 
 // Normalize NewsAPI response
 const normalizeNewsAPIResponse = (response) => {

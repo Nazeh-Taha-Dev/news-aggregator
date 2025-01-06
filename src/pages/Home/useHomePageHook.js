@@ -8,123 +8,124 @@ import { useDebounce } from "../../utils/hooks";
 import { useFilterData } from "./FilterDataContext";
 import { formatNYTDate } from "../../utils/handlers";
 
-
 const useHomePageHook = () => {
   const { filterData } = useFilterData();
   const { searchTerm, category, source, date } = filterData;
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [error, setError] = useState(null);
 
-  const totalPagesRef = useRef({
-    guardian: 2,
-    newsAPI: 2,
-    nyt: 2,
-  });
-
-  const hasMore =
-    currentPage < totalPagesRef.current.guardian ||
-    currentPage < totalPagesRef.current.newsAPI ||
-    currentPage < totalPagesRef.current.nyt;
+  const totalPagesRef = useRef({ guardian: 2, newsAPI: 2, nyt: 2 });
+  const isFetching = useRef(false);
+  const hasMore = !!source
+    ? page < totalPagesRef.current[source]
+    : Object.keys(totalPagesRef.current).some(
+        (key) => page < totalPagesRef.current[key]
+      );
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const debouncedCategory = useDebounce(category, 500);
 
-  const fetchArticles = useCallback(
-    async (page = 1) => {
-      const reset = page === 1;
-      if (reset) {
-        setArticles([]);
-      }
-      setCurrentPage(page);
-      setLoading(true);
-
-      const fetchTasks = [
-        page < totalPagesRef.current.newsAPI &&
-          fetchNewsAPIArticles({
-            page,
-            from: date,
-            category,
-            sources: source,
-            sortBy: "publishedAt",
-            q: debouncedSearchTerm || "latest",
-          }).catch((error) => {
-            console.error("Error fetching NewsAPI articles:", error);
-            return {
-              payload: {
-                articles: [],
-                totalPages: totalPagesRef.current.newsAPI,
-              },
-            };
-          }),
-        page < totalPagesRef.current.guardian &&
-          fetchGuardianArticles({
-            page,
-            "from-date": date,
-            section: category,
-            source,
-            "show-fields": "trailText,thumbnail",
-            q: debouncedSearchTerm,
-          }).catch((error) => {
-            console.error("Error fetching Guardian articles:", error);
-            return {
-              payload: {
-                articles: [],
-                totalPages: totalPagesRef.current.guardian,
-              },
-            };
-          }),
-        page < totalPagesRef.current.nyt &&
-          fetchNYTArticles({
-            begin_date: formatNYTDate(date),
-            section: category,
-            source,
-             page,
-             q: debouncedSearchTerm }).catch((error) => {
-            console.error("Error fetching NYT articles:", error);
-            return {
-              payload: { articles: [], totalPages: totalPagesRef.current.nyt },
-            };
-          }),
-      ];
-
+  const fetchArticlesFromSources = useCallback(
+    async (fetchTasks) => {
       try {
-        const [newsAPIData, guardianData, nytData] = await Promise.all(
-          fetchTasks
+        const results = await Promise.all(
+          Array.isArray(fetchTasks) ? fetchTasks : [fetchTasks]
         );
 
-        totalPagesRef.current = {
-          newsAPI:
-            newsAPIData?.payload?.totalPages || totalPagesRef.current.newsAPI,
-          guardian:
-            guardianData?.payload?.totalPages || totalPagesRef.current.guardian,
-          nyt: nytData?.payload?.totalPages || totalPagesRef.current.nyt,
-        };
+        const updatedTotalPages = { ...totalPagesRef.current };
+        const newArticles = [];
 
-        const newArticles = [
-          ...(newsAPIData?.payload?.articles || []),
-          ...(guardianData?.payload?.articles || []),
-          ...(nytData?.payload?.articles || []),
-        ];
+        results.forEach((result, index) => {
+          const sourceName = Array.isArray(fetchTasks)
+            ? ["newsAPI", "guardian", "nyt"][index]
+            : source;
+          updatedTotalPages[sourceName] =
+            result?.payload?.totalPages || updatedTotalPages[sourceName];
+          newArticles.push(...(result?.payload?.articles || []));
+        });
 
+        totalPagesRef.current = updatedTotalPages;
         setArticles((prevArticles) => [...prevArticles, ...newArticles]);
       } catch (error) {
         console.error("Error fetching articles:", error);
+        setError("Failed to fetch articles.");
       } finally {
         setLoading(false);
+        isFetching.current = false;
       }
     },
-    [category, date, debouncedSearchTerm, source]
+    [source]
   );
+
+  const fetchArticles = useCallback(
+    async (_page = 1) => {
+      if (isFetching.current) return;
+      isFetching.current = true;
+
+      const reset = _page === 1;
+      setPage(_page);
+
+      if (reset) {
+        setArticles([]);
+      }
+
+      setLoading(true);
+      const fetchTasks = {
+        newsApi: () =>
+          fetchNewsAPIArticles({
+            page: _page,
+            from: date,
+            debouncedCategory,
+            sortBy: "publishedAt",
+            q: debouncedSearchTerm || "latest",
+          }),
+        theGuardian: () =>
+          fetchGuardianArticles({
+            page: _page,
+            "from-date": date,
+            section: debouncedCategory,
+            "show-fields": "trailText,thumbnail",
+            q: debouncedSearchTerm,
+          }),
+        newYorkTimes: () =>
+          fetchNYTArticles({
+            begin_date: formatNYTDate(date),
+            section: debouncedCategory,
+            page: _page,
+            q: debouncedSearchTerm,
+          }),
+      };
+
+      await fetchArticlesFromSources(
+        !!source
+          ? fetchTasks[source]()
+          : Object.values(fetchTasks).map((task) => task())
+      );
+    },
+    [
+      fetchArticlesFromSources,
+      source,
+      date,
+      debouncedCategory,
+      debouncedSearchTerm,
+    ]
+  );
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm, source, category]);
 
   useEffect(() => {
     fetchArticles();
   }, [fetchArticles]);
 
   const fetchNextPageArticles = useCallback(() => {
-    fetchArticles(currentPage + 1);
-  }, [currentPage, fetchArticles]);
+    fetchArticles(page + 1);
+  }, [fetchArticles, page]);
 
-  return { articles, loading, fetchNextPageArticles, hasMore };
+  return { articles, loading, fetchNextPageArticles, hasMore, error };
 };
 
 export default useHomePageHook;

@@ -11,26 +11,29 @@ import {
   InputAdornment,
   Grid2,
   Button,
+  Typography,
+  Divider,
 } from "@mui/material";
 import { FilterList, Search } from "@mui/icons-material";
 import { useFilterData } from "../pages/Home/FilterDataContext";
+import { categoriesOptions, sourcesOptions } from "../constants";
 
 /**
  * FilterCard component provides a UI for filtering articles based on several criteria.
  * It includes a search field, and collapsible filters for date, category, and source.
- * 
+ *
  * - The search field allows users to input a search term to filter articles by their title or content.
  * - The filters button toggles the visibility of additional filter options.
  * - The date filter allows users to select a specific date to filter articles.
  * - The category filter provides a dropdown to select a category for filtering articles.
  * - The source filter provides a dropdown to select a source for filtering articles.
- * 
+ *
  * This component uses the `useFilterData` hook to manage filter state and update filters.
  */
 const FilterCard = () => {
   const [open, setOpen] = useState(false);
   const { handleChangeFilters, filterData } = useFilterData();
-  
+
   const { category, source, date } = filterData;
   return (
     <Box
@@ -72,7 +75,10 @@ const FilterCard = () => {
         </Button>
       </Stack>
       <Collapse in={open}>
+        <Typography variant="h6">Filters</Typography>
+        <Divider />
         <Grid2 container spacing={1}>
+          {/* ------ Date Filter ------- */}
           <Grid2 size={{ xs: 12, sm: 4 }}>
             <TextField
               type="date"
@@ -83,6 +89,7 @@ const FilterCard = () => {
               fullWidth
             />
           </Grid2>
+            {/* ------ Category Filter ------- */}
           <Grid2 size={{ xs: 12, sm: 4 }}>
             <FormControl fullWidth style={{ margin: "10px 0" }}>
               <InputLabel>Category</InputLabel>
@@ -91,19 +98,24 @@ const FilterCard = () => {
                 name="category"
                 onChange={handleChangeFilters}
               >
-                <MenuItem value="">All</MenuItem>
-                <MenuItem value="category1">Category 1</MenuItem>
-                <MenuItem value="category2">Category 2</MenuItem>
+                {categoriesOptions.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)
+                )}
               </Select>
             </FormControl>
           </Grid2>
+          {/* ------ Source Filter ------- */}
           <Grid2 size={{ xs: 12, sm: 4 }}>
             <FormControl fullWidth style={{ margin: "10px 0" }}>
               <InputLabel>Source</InputLabel>
-              <Select name="source" value={source} onChange={handleChangeFilters}>
-                <MenuItem value="">All</MenuItem>
-                <MenuItem value="source1">Source 1</MenuItem>
-                <MenuItem value="source2">Source 2</MenuItem>
+              <Select
+                name="source"
+                value={source}
+                onChange={handleChangeFilters}
+              >
+               {sourcesOptions.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)
+                )}
               </Select>
             </FormControl>
           </Grid2>

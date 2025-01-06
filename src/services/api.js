@@ -6,14 +6,14 @@ import {
   NYT_API_KEY,
   NYT_API_URL,
   PAGE_SIZE,
-} from "./base-urls-consts";
+} from "../constants";
 import {
   normalizeGuardianResponse,
   normalizeNewsAPIResponse,
   normalizeNYTResponse,
   removeEmptyValues,
 } from "../utils/handlers";
-import { apiHandler } from "../utils/handlers/apiHandler";
+import { apiHandler } from "../utils/handlers";
 
 
 
