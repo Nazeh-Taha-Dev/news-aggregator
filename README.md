@@ -71,7 +71,7 @@ Ensure you have the following installed on your machine:
 
 ### Step 1: Clone the Repository  
 ```bash
-git clone https://github.com/yourusername/news-aggregator.git
+git clone https://github.com/Nazeh-Taha-Dev/news-aggregator.git
 cd news-aggregator
 ```
 ### Step 2: Build the Docker Image
