@@ -57,7 +57,7 @@ const FilterCard = () => {
           variant="outlined"
           fullWidth
           onChange={handleChangeFilters}
-          InputProps={{
+          inputProps={{
             startAdornment: (
               <InputAdornment position="start">
                 <Search />
@@ -68,10 +68,12 @@ const FilterCard = () => {
         <Button
           variant="text"
           color="primary"
-          endIcon={<FilterList color="primary" />}
           onClick={() => setOpen(!open)}
         >
-          Filters
+          <Stack alignItems="center">
+            Filters
+            <FilterList color="primary" />
+          </Stack>
         </Button>
       </Stack>
       <Collapse in={open}>
@@ -83,13 +85,14 @@ const FilterCard = () => {
             <TextField
               type="date"
               id="date"
+              variant="outlined"
               value={date}
               onChange={handleChangeFilters}
               style={{ margin: "10px 0" }}
               fullWidth
             />
           </Grid2>
-            {/* ------ Category Filter ------- */}
+          {/* ------ Category Filter ------- */}
           <Grid2 size={{ xs: 12, sm: 4 }}>
             <FormControl fullWidth style={{ margin: "10px 0" }}>
               <InputLabel>Category</InputLabel>
@@ -98,9 +101,11 @@ const FilterCard = () => {
                 name="category"
                 onChange={handleChangeFilters}
               >
-                {categoriesOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)
-                )}
+                {[{ label: "All", value: "" }, ...categoriesOptions].map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Grid2>
@@ -113,9 +118,11 @@ const FilterCard = () => {
                 value={source}
                 onChange={handleChangeFilters}
               >
-               {sourcesOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)
-                )}
+                {[{ label: "All", value: "" }, ...sourcesOptions].map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Grid2>

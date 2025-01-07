@@ -1,6 +1,14 @@
 import { Grid2, Skeleton } from "@mui/material";
 
-export function LoadingSkeleton({ length = 12 }) {
+/**
+ * LoadingSkeleton component renders a set of skeleton elements
+ * to indicate loading state for a list of items.
+ *
+ * @param {Object} props - The properties object.
+ * @param {number} props.length - The number of skeleton elements to render. Default is 9.
+ * @returns {JSX.Element} A fragment containing multiple Grid2 and Skeleton components.
+ */
+export function LoadingSkeleton({ length = 9 }) {
   return (
     <>
       {Array.from({ length }, (_, i) => i + 1).map((el) => (
@@ -8,10 +16,9 @@ export function LoadingSkeleton({ length = 12 }) {
           <Skeleton
             variant="rect"
             animation="wave"
-            sx={{ bgcolor: "grey.300" }}
-            height={300}
+            sx={{ bgcolor: "grey.400", minHeight: 400, borderRadius: 1 }}
+            height="100%"
             key={el}
-            style={{ borderRadius: 8 }}
           />
         </Grid2>
       ))}

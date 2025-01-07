@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 /**
  * Hook to debounce a value.
  * @param {any} value - The value to debounce.

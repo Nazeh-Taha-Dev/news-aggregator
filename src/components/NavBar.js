@@ -1,33 +1,53 @@
-import React from "react";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import { Box } from "@mui/material";
+import React, { useState } from "react";
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Tooltip,
+} from "@mui/material";
 import logo from "../assets/imgs/logo.png";
+import { DisplaySettings } from "@mui/icons-material";
+import UserPreferencesDrawer from "./UserPreferencesDrawer";
 
-const Navbar = ({ searchTerm, onSearchChange }) => {
+/**
+ * A simple navigation bar with a logo and a button to open the preferences drawer.
+ * @returns {ReactElement} - A MUI AppBar component with a logo and a button to open the preferences drawer.
+ */
+export default function NavBar() {
+  const [preferencesDrawerIsOpen, setPreferencesDrawerIsOpen] = useState(false);
+
+  const handleOpenPreferencesDrawer = () => {
+    setPreferencesDrawerIsOpen(true);
+  };
+
+  const handleClosePreferencesDrawer = () => {
+    setPreferencesDrawerIsOpen(false);
+  };
+
   return (
-    <AppBar position="static" color="primary">
-      <Toolbar>
-        {/* Logo */}
-        <Box sx={{ flexGrow: 1 }}>
-          <img src={logo} alt="logo" style={{ width: 40 }} loading="lazy" />
-        </Box>
-       
+    <>
+      <AppBar position="fixed">
+        <Toolbar>
+          <img src={logo} alt="logo" style={{ width: 40 }} />
+          <Typography
+            variant="body1"
+            sx={{ flexGrow: 1, marginInlineStart: 0.5 }}
+          >
+            Aggregator
+          </Typography>
 
-        {/* Mobile Menu Icon */}
-        <IconButton
-          edge="end"
-          color="inherit"
-          aria-label="menu"
-          sx={{ display: { sm: "none" } }}
-        >
-          <MenuIcon />
-        </IconButton>
-      </Toolbar>
-    </AppBar>
+          <IconButton onClick={handleOpenPreferencesDrawer}  color="inherit">
+            <Tooltip title="Preferences" edge="end">
+              <DisplaySettings />
+            </Tooltip>
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      <UserPreferencesDrawer
+        isOpen={preferencesDrawerIsOpen}
+        handleClose={handleClosePreferencesDrawer}
+      />
+    </>
   );
-};
-
-export default Navbar;
+}

@@ -8,8 +8,7 @@
  * @param {Object} options.urlParams - Query parameters to be added to the URL
  * @param {string} options.method - HTTP method to use (default: GET)
  * @param {function} options.normalizeResponseFunction - Function to normalize the response data
- * @returns {Promise<Object>} - Promise with response data,
- *                              with {status, message, payload} properties
+ * @returns {Promise<Object>} - Promise with response data, with {status, message, payload} properties
  */
 export async function apiHandler({
   url = "",

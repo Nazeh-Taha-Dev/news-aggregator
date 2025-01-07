@@ -5,13 +5,29 @@ import useHomePageHook from "./useHomePageHook";
 import { LoadingSkeleton } from "../../components/LoadingSkeleton";
 import FilterCard from "../../components/FilterCard";
 import { FilterDataProvider } from "./FilterDataContext";
-import { useInfiniteScroll } from "../../utils/hooks";
+import { useInfiniteScroll, useLocalStorage } from "../../utils/hooks";
+import { PAGE_SIZE } from "../../constants";
+import NoResultComponent from "../../components/NoResultComponent";
+import { usePreferencesData } from "../../global-context";
 
-
+/**
+ * Home component renders the main content of the page, including a list of articles
+ * and filter options. It utilizes hooks to manage state and fetch articles from
+ * different sources. The component also supports infinite scrolling to load more
+ * articles when the user scrolls to the end of the list.
+ *
+ * - Displays a loading skeleton while articles are being fetched.
+ * - Shows a no result component when no articles match the filters.
+ * - Uses the FilterCard component for filtering options.
+ * - Uses the ArticleCard component to display individual articles.
+ * - Utilizes the useInfiniteScroll hook to load more articles as the user scrolls.
+ */
 function Home() {
-  
-  const { loading, articles,hasMore, fetchNextPageArticles } = useHomePageHook();
+  // Custom hook to fetch articles and manage state
+  const { loading, articles, hasMore, fetchNextPageArticles } =
+    useHomePageHook();
 
+  // Custom hook for infinite scrolling
   const { lastItemRef } = useInfiniteScroll({
     hasMore,
     isLoading: loading,
@@ -32,8 +48,9 @@ function Home() {
             <ArticleCard article={article} />
           </Grid2>
         ))}
-        {loading && <LoadingSkeleton />}
+        {loading && <LoadingSkeleton length={PAGE_SIZE} />}
       </Grid2>
+      {!loading && articles.length === 0 && <NoResultComponent />}
     </Container>
   );
 }

@@ -12,6 +12,8 @@ const normalizeNewsAPIResponse = (response) => {
     articles: response.articles.map((article) => ({
       id: uuidv4(),
       title: article?.title || "",
+      category: article?.category || "",
+      author: article?.author || "",
       description: article?.description || "",
       url: article?.url || "",
       source: "News Api",
@@ -34,6 +36,8 @@ const normalizeGuardianResponse = (response) => {
     articles: response.response.results.map((article) => ({
       id: uuidv4(),
       title: article?.webTitle || "",
+      category: article?.sectionName || "",
+      author: article?.fields?.byline || "",
       description: article?.fields?.trailText || "",
       url: article?.webUrl || "",
       source: "The Guardian",
@@ -57,6 +61,8 @@ const normalizeNYTResponse = (response) => {
     articles: response.response.docs.map((article) => ({
       id: uuidv4(),
       title: article?.headline?.main || "",
+      category: article?.section_name || "",
+      author: article?.byline?.original || "",
       description: article?.snippet || "",
       url: article?.web_url || "",
       source: "The New York Times",
