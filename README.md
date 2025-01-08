@@ -4,6 +4,23 @@ The **News Aggregator** is a React-based web application that allows users to br
 
 ---
 
+## Obstacles
+
+While developing this project, I encountered several obstacles, including:
+
+1. **APIs do not support multiple values for categories:**  
+   The APIs used in this project do not natively support querying multiple categories in a single request. This required implementing additional client-side filtering to meet the project's requirements.
+
+2. **APIs do not support filtering by authors:**  
+   Since the APIs lack support for filtering articles by specific authors, I had to implement custom logic to extract, store, and filter articles by authors on the client side.
+
+3. **No API available to retrieve a list of authors:**  
+   Since none of the APIs provided an endpoint to fetch a list of authors directly, I implemented a custom solution that extracts author names from the retrieved articles and stores them locally.
+
+4. **API request limitations:**  
+    The APIs used have strict rate limits, which posed challenges when testing and debugging the application. To handle this, caching and local storage mechanisms were used to reduce unnecessary API calls.
+   mechanisms were used to reduce unnecessary API calls.
+
 ## Features
 
 ### Core Features
@@ -111,6 +128,7 @@ cd news-aggregator
 ```
 
 ### Step 2:Install Dependencies
+
 Ensure you have Node.js (v16+ recommended) installed, then run:
 
 ```bash
@@ -122,6 +140,7 @@ npm install
 ```bash
 npm start
 ```
+
 ### Step 4: Access the Application
 
 Open your browser and navigate to:
