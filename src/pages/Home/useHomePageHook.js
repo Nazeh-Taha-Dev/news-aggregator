@@ -38,7 +38,7 @@ const useHomePageHook = () => {
   const totalPagesRef = useRef({ guardian: 2, newsAPI: 2, nyt: 2 });
   // const isFetching = useRef(false);
 
-  // Debounce the search term and category
+  // Debounce the search term, category, source and date
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const debouncedCategory = useDebounce(category, 500);
   const debouncedSource = useDebounce(source, 500);
@@ -59,7 +59,7 @@ const useHomePageHook = () => {
 
   /**
    * Fetches articles from the specified sources.
-   * If the source is not specified, it fetches from all sources.
+   * If the sources are not specified, it fetches from all sources.
    */
   const fetchArticlesFromSources = useCallback(
     async (fetchTasks) => {
@@ -104,7 +104,6 @@ const useHomePageHook = () => {
    */
   const fetchArticles = useCallback(
     async (_page = 1) => {
-
       const reset = _page === 1;
       setPage(_page);
 
@@ -114,6 +113,13 @@ const useHomePageHook = () => {
 
       setLoading(true);
       const fetchTasks = {
+        /**
+         * Fetches articles from NewsAPI.
+         * @param {number} _page The page number to fetch.
+         * @param {string} debouncedDate The date to filter articles.
+         * @param {string} debouncedCategory The category to filter articles.
+         * @param {string} debouncedSearchTerm The search term to filter articles.
+         */
         newsApi: () =>
           fetchNewsAPIArticles({
             page: _page,
@@ -122,6 +128,13 @@ const useHomePageHook = () => {
             sortBy: "publishedAt",
             q: debouncedSearchTerm || "latest",
           }),
+        /**
+         * Fetches articles from The Guardian.
+         * @param {number} _page The page number to fetch.
+         * @param {string} debouncedDate The date to filter articles.
+         * @param {string} debouncedCategory The category to filter articles.
+         * @param {string} debouncedSearchTerm The search term to filter articles.
+         */
         theGuardian: () =>
           fetchGuardianArticles({
             page: _page,
@@ -130,6 +143,16 @@ const useHomePageHook = () => {
             "show-fields": "trailText,thumbnail,byline",
             q: debouncedSearchTerm,
           }),
+        /**
+         * Fetches articles from The New York Times.
+         *
+         * @param {number} _page - The page number to fetch.
+         * @param {string} debouncedDate - The date to filter articles from.
+         * @param {string} debouncedCategory - The category to filter articles.
+         * @param {string} debouncedSearchTerm - The search term to filter articles.
+         *
+         * @returns {Promise<Object>} - A promise resolving to the fetched articles.
+         */
         newYorkTimes: () =>
           fetchNYTArticles({
             page: _page,

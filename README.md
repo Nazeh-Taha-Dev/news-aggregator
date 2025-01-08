@@ -2,6 +2,8 @@
 
 The **News Aggregator** is a React-based web application that allows users to browse, search, and filter news articles from multiple trusted sources. Users can personalize their news feed based on preferred categories, sources, and authors, ensuring a customized experience. This project follows best software development practices, including **DRY**, **KISS**, and **SOLID** principles, and is fully containerized using **Docker**.
 
+## Life Demo
+- [News Aggregator Link](https://news-aggregator-kappa-peach.vercel.app/)
 ---
 
 ## Obstacles

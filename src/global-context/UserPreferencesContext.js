@@ -27,6 +27,14 @@ const initState = {
  */
 export function createUserPreferencesContext() {
   const StateContext = createContext(initState);
+  /**
+   * The ContextProvider component wraps the app and provides the context to
+   * all components down the tree. It manages the state of the user preferences
+   * and provides a way to update the state through the setPreferences function.
+   *
+   * @param {Object} children - The components to be wrapped by the provider.
+   * @returns {Object} A component that wraps the children and provides the context.
+   */
   const ContextProvider = ({ children }) => {
     const [preferences, setPreferences] = useState(initState.preferences);
     const [storedPreferences] = useLocalStorage("userPreferences", {
