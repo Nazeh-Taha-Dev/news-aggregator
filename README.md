@@ -93,7 +93,7 @@ docker build -t news-aggregator .
 Once the image is built, run the container using:
 
 ```bash
-docker run -d -p 3000:3000 --name news-aggregator news-aggregator
+docker run -d -p 3000:80 --name news-aggregator news-aggregator
 ```
 
 ### Step 4: Access the Application

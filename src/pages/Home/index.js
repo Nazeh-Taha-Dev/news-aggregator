@@ -5,10 +5,9 @@ import useHomePageHook from "./useHomePageHook";
 import { LoadingSkeleton } from "../../components/LoadingSkeleton";
 import FilterCard from "../../components/FilterCard";
 import { FilterDataProvider } from "./FilterDataContext";
-import { useInfiniteScroll, useLocalStorage } from "../../utils/hooks";
+import { useInfiniteScroll } from "../../utils/hooks";
 import { PAGE_SIZE } from "../../constants";
 import NoResultComponent from "../../components/NoResultComponent";
-import { usePreferencesData } from "../../global-context";
 
 /**
  * Home component renders the main content of the page, including a list of articles
