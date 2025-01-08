@@ -36,8 +36,13 @@ const useHomePageHook = () => {
 
   // Refs to store the total pages of each source
   const totalPagesRef = useRef({ guardian: 2, newsAPI: 2, nyt: 2 });
-  const isFetching = useRef(false);
+  // const isFetching = useRef(false);
 
+  // Debounce the search term and category
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const debouncedCategory = useDebounce(category, 500);
+  const debouncedSource = useDebounce(source, 500);
+  const debouncedDate = useDebounce(date, 500);
   /**
    * Returns a boolean indicating if there are more articles to fetch.
    * If the source is not specified, it checks if any of the sources have more pages.
@@ -52,9 +57,6 @@ const useHomePageHook = () => {
     return page < totalPagesRef.current[source];
   }, [page, source, totalPagesRef]);
 
-  // Debounce the search term and category
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
-  const debouncedCategory = useDebounce(category, 500);
   /**
    * Fetches articles from the specified sources.
    * If the source is not specified, it fetches from all sources.
@@ -72,7 +74,7 @@ const useHomePageHook = () => {
         results.forEach((result, index) => {
           const sourceName = Array.isArray(fetchTasks)
             ? ["newsAPI", "guardian", "nyt"][index]
-            : source;
+            : debouncedSource;
           updatedTotalPages[sourceName] =
             result?.payload?.totalPages || updatedTotalPages[sourceName];
           newArticles.push(...(result?.payload?.articles || []));
@@ -91,10 +93,9 @@ const useHomePageHook = () => {
         setError("Failed to fetch articles.");
       } finally {
         setLoading(false);
-        isFetching.current = false;
       }
     },
-    [preferences, source]
+    [preferences, debouncedSource]
   );
 
   /**
@@ -103,8 +104,6 @@ const useHomePageHook = () => {
    */
   const fetchArticles = useCallback(
     async (_page = 1) => {
-      if (isFetching.current) return;
-      isFetching.current = true;
 
       const reset = _page === 1;
       setPage(_page);
@@ -118,7 +117,7 @@ const useHomePageHook = () => {
         newsApi: () =>
           fetchNewsAPIArticles({
             page: _page,
-            from: date,
+            from: debouncedDate,
             debouncedCategory,
             sortBy: "publishedAt",
             q: debouncedSearchTerm || "latest",
@@ -126,7 +125,7 @@ const useHomePageHook = () => {
         theGuardian: () =>
           fetchGuardianArticles({
             page: _page,
-            "from-date": date,
+            "from-date": debouncedDate,
             section: debouncedCategory,
             "show-fields": "trailText,thumbnail,byline",
             q: debouncedSearchTerm,
@@ -134,22 +133,22 @@ const useHomePageHook = () => {
         newYorkTimes: () =>
           fetchNYTArticles({
             page: _page,
-            begin_date: formatNYTDate(date),
+            begin_date: formatNYTDate(debouncedDate),
             section: debouncedCategory,
             q: debouncedSearchTerm,
           }),
       };
 
       await fetchArticlesFromSources(
-        !!source
-          ? fetchTasks[source]()
+        !!debouncedSource
+          ? fetchTasks[debouncedSource]()
           : Object.values(fetchTasks).map((task) => task())
       );
     },
     [
       fetchArticlesFromSources,
-      source,
-      date,
+      debouncedSource,
+      debouncedDate,
       debouncedCategory,
       debouncedSearchTerm,
     ]
