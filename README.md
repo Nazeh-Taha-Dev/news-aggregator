@@ -128,8 +128,7 @@ cd news-aggregator
 ```
 
 ### Step 2:Install Dependencies
-
-Ensure you have Node.js (v16+ recommended) installed, then run:
+Ensure you have NodeJs (v16+ recommended) installed, then run:
 
 ```bash
 npm install
